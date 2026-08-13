@@ -837,8 +837,8 @@ function renderMethods() {
 function renderFooter() {
   const host = document.getElementById("footer-host");
   host.replaceChildren(
-    h("p", { html: `<strong>Political Creator Dashboard</strong> — Eva-Maria Vogel, Christian Pipal, `
-      + `Morgan Wack and Frank Esser. Department of Communication and Media Research (IKMZ), `
+    h("p", { html: `<strong>Political Creator Dashboard</strong> — Eva-Maria Vogel, Morgan Wack, `
+      + `Christian Pipal and Frank Esser. Department of Communication and Media Research (IKMZ), `
       + `University of Zurich, Andreasstrasse 15, 8050 Zürich, Switzerland.` }),
     h("p", { html: `Built on the research dataset behind the group's work on political social media `
       + `influencers in the 2024 US election. Figures on this site are generated directly from the `
