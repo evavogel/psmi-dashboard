@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Source research data. Never copied into this repo.
+*.csv
+*.xlsx
+*.sav
+
+# Generated data. Rebuild with: python build.py
+site/data/
+
+# Internal working notes and local tooling, not part of the published project.
+PROJECT_STATUS.md
+PARKED.md
+.claude/
