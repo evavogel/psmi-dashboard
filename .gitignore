@@ -15,3 +15,6 @@ site/data/
 PROJECT_STATUS.md
 PARKED.md
 .claude/
+
+# Deployment bundles built for manual upload.
+*.zip
