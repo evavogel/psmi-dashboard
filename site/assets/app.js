@@ -19,19 +19,23 @@ const SHAPE_BY_ORIGIN = {
 
 /* ---------- boot ---------- */
 async function boot() {
-  const page = document.body.dataset.page || "home";
-  const needed = page === "methods" ? ["overview", "methods"]
-    : ["accounts", "overview", "quiz", "methods"];
-  // "no-cache" revalidates against the server before using a cached copy, so a
-  // returning visitor never gets stale data after the JSON is rebuilt.
-  const loaded = await Promise.all(needed.map((n) =>
-    fetch(`data/${n}.json`, { cache: "no-cache" }).then((r) => r.json())));
-  needed.forEach((n, i) => { DATA[n] = loaded[i]; });
-
+  const page = document.body.dataset.page || "dashboard";
+  const base = document.body.dataset.base || "";
   initTheme();
+
+  // Umbrella and about pages carry no data; they only need the theme and footer.
+  const needed = { dashboard: ["accounts", "overview", "quiz"], methods: ["overview", "methods"] }[page];
+  if (needed) {
+    // "no-cache" revalidates against the server before using a cached copy, so a
+    // returning visitor never gets stale data after the JSON is rebuilt.
+    const loaded = await Promise.all(needed.map((n) =>
+      fetch(`${base}data/${n}.json`, { cache: "no-cache" }).then((r) => r.json())));
+    needed.forEach((n, i) => { DATA[n] = loaded[i]; });
+  }
+
   if (page === "methods") {
     renderMethods();
-  } else {
+  } else if (page === "dashboard") {
     renderHero();
     renderRhythm();
     renderExplore();
@@ -61,10 +65,9 @@ function initTheme() {
 
 /* Charts read CSS variables at draw time, so a theme switch redraws them. */
 function rerenderCharts() {
-  if ((document.body.dataset.page || "home") === "methods") {
-    renderMethods();
-    return;
-  }
+  const page = document.body.dataset.page || "dashboard";
+  if (page === "methods") { renderMethods(); return; }
+  if (page !== "dashboard") return;
   renderRhythm();
   renderExplore();
   renderOrigins();
@@ -553,8 +556,8 @@ function renderRhythm() {
 
   const byParty = chartCard({
     title: "Daily posts, by partisan lean",
-    note: "All 140 accounts. Look at the sawtooth in the lines: "
-      + "posting rises midweek and falls at weekends. The pattern is easiest to see on the "
+    note: "All 140 accounts. Weekends are shaded grey: posting drops inside almost every band and "
+      + "climbs again midweek. The pattern is easiest to see on the "
       + "Republican-leaning line, whose much higher volume makes the weekly swing more visible. "
       + "Almost every high-volume account in the dataset shows it, and it is strongest among accounts "
       + "run by people with a daily show. For many of these creators, political posting keeps the "
@@ -573,7 +576,7 @@ function renderRhythm() {
 
   const byOrigin = chartCard({
     title: "Daily posts, by origin of fame",
-    note: "Native creators post at a volume the other groups never approach.",
+    note: "Native creators post at a volume the other groups never approach. Weekends are shaded grey.",
     render: (el2) => lineChart(el2, {
       dates: days, events,
       series: origin.order.map((o) => ({ label: origin.labels[o], values: timeseries.by_origin[o] })),
@@ -586,7 +589,8 @@ function renderRhythm() {
 
   const share = chartCard({
     title: "Share of all posts that were political, by day",
-    note: "The feed did not become steadily more political; it spiked around events and peaked at the vote.",
+    note: "The feed did not become steadily more political; it spiked around events and peaked at the "
+      + "vote. Weekends are shaded grey.",
     render: (el2) => lineChart(el2, {
       dates: days, events,
       series: [{ label: "Political share", values: timeseries.political_share }],
@@ -836,15 +840,26 @@ function renderMethods() {
 
 function renderFooter() {
   const host = document.getElementById("footer-host");
-  host.replaceChildren(
-    h("p", { html: `<strong>Political Creator Dashboard</strong> — Eva-Maria Vogel, Morgan Wack, `
-      + `Christian Pipal and Frank Esser. Department of Communication and Media Research (IKMZ), `
-      + `University of Zurich, Andreasstrasse 15, 8050 Zürich, Switzerland.` }),
-    h("p", { html: `Built on the research dataset behind the group's work on political social media `
-      + `influencers in the 2024 US election. Figures on this site are generated directly from the `
-      + `classified dataset; see <a href="#methods">Methods</a> for accuracy and limitations.` }),
-    h("p", { html: `Contact: <a href="mailto:e.vogel@ikmz.uzh.ch">e.vogel@ikmz.uzh.ch</a>` }),
-  );
+  if (!host) return;
+  const base = document.body.dataset.base || "";
+  const page = document.body.dataset.page || "dashboard";
+
+  const credit = h("p", { html: `<strong>PSMI Dashboards</strong> — Eva-Maria Vogel, Morgan Wack, `
+    + `Christian Pipal and Frank Esser. Department of Communication and Media Research (IKMZ), `
+    + `University of Zurich, Andreasstrasse 15, 8050 Zürich, Switzerland.` });
+
+  const provenance = page === "dashboard"
+    ? h("p", { html: `Figures on this page are generated directly from the classified research `
+        + `dataset; see <a href="methods.html">Methods</a> for accuracy and limitations.` })
+    : page === "methods"
+      ? h("p", { text: "Figures across this dashboard are generated directly from the classified "
+          + "research dataset." })
+      : null;
+
+  const links = h("p", { html: `<a href="${base}about.html">About us</a> · `
+    + `Contact: <a href="mailto:e.vogel@ikmz.uzh.ch">e.vogel@ikmz.uzh.ch</a>` });
+
+  host.replaceChildren(...[credit, provenance, links].filter(Boolean));
 }
 
 boot();

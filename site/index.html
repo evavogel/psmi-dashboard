@@ -3,27 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Who is in your political feed? — 2024 US election creator dashboard</title>
-<meta name="description" content="An interactive look at 140 of the most-followed US political creators across X, Instagram and TikTok during the 2024 election: how partisan they are, what they post, and where they came from.">
+<title>PSMI Dashboards — political social media influencers</title>
+<meta name="description" content="Interactive dashboards on political social media influencers, from the Department of Communication and Media Research at the University of Zurich.">
 <!-- Draft: not indexable until co-author sign-off. Change to "index, follow" to go public. -->
 <meta name="robots" content="noindex, nofollow">
-<meta property="og:title" content="Who is in your political feed?">
-<meta property="og:description" content="140 political creators, 51,006 posts, three platforms, one election.">
-<meta property="og:type" content="website">
-<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="assets/app.css">
 </head>
-<body data-page="home">
+<body data-page="umbrella">
 
 <nav class="nav">
   <div class="wrap nav-inner">
-    <span class="nav-brand">Political Creator Dashboard</span>
+    <a class="nav-brand" href="./">PSMI Dashboards</a>
     <div class="nav-links">
-      <a href="#rhythm">Campaign rhythm</a>
-      <a href="#explore">Explore</a>
-      <a href="#origins">Who they are</a>
-      <a href="#tone">Attack or advocate</a>
-      <a href="#quiz">Quiz</a>
-      <a href="methods.html">Methods</a>
+      <a href="#dashboards">Dashboards</a>
+      <a href="about.html">About us</a>
     </div>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch colour theme">Theme</button>
   </div>
@@ -31,78 +24,42 @@
 
 <header class="hero">
   <div class="wrap">
-    <div class="kicker">2024 US presidential election</div>
-    <h1>Who is actually in your political feed?</h1>
+    <div class="kicker">University of Zurich · IKMZ</div>
+    <h1>Political social media influencers, measured</h1>
     <p class="lede">
-      During the ten weeks before the 2024 US election we collected every post from 140 of the
-      most-followed political creators on X, Instagram and TikTok, and classified all
-      <span id="hero-posts">51,006</span> of them. This is what the American political creator
-      landscape looked like from the inside.
+      A growing set of interactive dashboards on the creators who shape political talk online: who
+      they are, what they post, and how far their content travels. Each one is built from a
+      classified research dataset and documents its own methods and limitations.
     </p>
-    <div class="tiles" id="hero-tiles"></div>
   </div>
 </header>
 
-<section id="rhythm">
+<section id="dashboards">
   <div class="wrap">
-    <div class="section-kicker">Campaign rhythm</div>
-    <h2>Ten weeks of posting, day by day</h2>
-    <p class="intro">
-      Daily post volume across all 140 accounts, from 1 September to election day and the morning after.
-    </p>
-    <div id="rhythm-cards"></div>
-  </div>
-</section>
+    <div class="section-kicker">Dashboards</div>
+    <h2>Explore the data</h2>
 
-<section id="explore">
-  <div class="wrap">
-    <div class="section-kicker">The creator map</div>
-    <h2>Every account, placed by how partisan it is and how much politics it posts</h2>
-    <p class="intro">
-      Each mark is one account. Left is Democratic-leaning, right is Republican-leaning, and higher up
-      means a larger share of that account's posts were political.
-    </p>
-    <div class="filters" id="explore-filters"></div>
-    <div id="explore-card"></div>
-    <p class="card-note" id="explore-count"></p>
-  </div>
-</section>
+    <div class="project-grid">
+      <a class="project-card" href="us-2024/">
+        <span class="project-status live">Live</span>
+        <h3>Who is in your political feed?</h3>
+        <p>
+          140 of the most-followed US political creators on X, Instagram and TikTok, and every post
+          they published in the ten weeks before the 2024 presidential election.
+        </p>
+        <div class="project-meta">2024 US presidential election · 51,006 posts · 3 platforms</div>
+      </a>
 
-<section id="origins">
-  <div class="wrap">
-    <div class="section-kicker">Who they are</div>
-    <h2>Nearly half arrived already famous</h2>
-    <p class="intro">
-      Political creators are not all creators of politics. Some built an audience on the platforms
-      themselves; others walked in with one, from a newsroom, a screen career or elected office.
-      Journalist-origin accounts turn out to be about as one-sided as creators who built their
-      following on politics.
-    </p>
-    <div id="origins-cards"></div>
-  </div>
-</section>
-
-<section id="tone">
-  <div class="wrap">
-    <div class="section-kicker">Attack or advocate</div>
-    <h2>Who tears down, who builds up, and who only ever picks one side</h2>
-    <p class="intro">
-      Every account sits somewhere between attacking opponents and advocating for its own side, and
-      almost all do some of each. Each mark below is one account, coloured by which side it leans to.
-      Click any account to read the actual posts behind its position.
-    </p>
-    <div id="tone-cards"></div>
-  </div>
-</section>
-
-<section id="quiz">
-  <div class="wrap">
-    <div class="section-kicker">Test yourself</div>
-    <h2>How well do you know the political feed?</h2>
-    <p class="intro">
-      A few questions about the creators on this page. Make a guess, then see the measured answer.
-    </p>
-    <div id="quiz-host"></div>
+      <div class="project-card muted">
+        <span class="project-status">In preparation</span>
+        <h3>More dashboards to come</h3>
+        <p>
+          Further studies from the same research programme will be published here as they are
+          completed, covering other elections and other platforms.
+        </p>
+        <div class="project-meta">Watch this space</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -110,6 +67,6 @@
   <div class="wrap" id="footer-host"></div>
 </footer>
 
-<script type="module" src="app.js"></script>
+<script type="module" src="assets/app.js"></script>
 </body>
 </html>

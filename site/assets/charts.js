@@ -43,6 +43,12 @@ export const fmtNum = (v) => {
   return `${Math.round(v)}`;
 };
 
+/** Format a plain YYYY-MM-DD date. Forcing UTC keeps the calendar day intact:
+    the string parses as UTC midnight, so local formatting moves it back a day
+    for any reader west of Greenwich. */
+export const fmtDate = (iso, opts) =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { ...opts, timeZone: "UTC" });
+
 /* ---------- colour ---------- */
 const srgb2lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
 const lin2srgb = (c) => {
@@ -286,6 +292,24 @@ export function lineChart(host, { dates, series, colors, events = [], yFmt = fmt
   const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" });
   const tip = makeTooltip(host);
 
+  // Weekend bands, drawn first so grid, lines and marks all sit above them.
+  // Dates are plain YYYY-MM-DD, so read the weekday in UTC: parsing them as
+  // local time shifts the day for anyone west of Greenwich.
+  let runStart = null;
+  dates.forEach((d, i) => {
+    const isWeekend = [0, 6].includes(new Date(`${d}T00:00:00Z`).getUTCDay());
+    if (isWeekend && runStart === null) runStart = i;
+    const last = i === dates.length - 1;
+    if (runStart !== null && (!isWeekend || last)) {
+      const end = isWeekend && last ? i : i - 1;
+      const x0 = Math.max(padL, sx(runStart - 0.5));
+      const x1 = Math.min(W - padR, sx(end + 0.5));
+      svg.appendChild(el("rect", { x: x0, y: padT, width: Math.max(1, x1 - x0),
+        height: H - padB - padT, fill: cssVar("--grid"), opacity: 0.6 }));
+      runStart = null;
+    }
+  });
+
   for (let i = 0; i <= 4; i++) {
     const v = (max / 4) * i;
     svg.appendChild(el("line", { x1: padL, x2: W - padR, y1: sy(v), y2: sy(v), class: "gridline" }));
@@ -305,7 +329,7 @@ export function lineChart(host, { dates, series, colors, events = [], yFmt = fmt
     svg.appendChild(el("text", {
       x: sx(i), y: H - padB + 16, class: "tick-label",
       "text-anchor": i === 0 ? "start" : "middle",
-    }, document.createTextNode(new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" }))));
+    }, document.createTextNode(fmtDate(d, { month: "short", day: "numeric" }))));
   });
 
   // Event rules carry a numbered badge; the labels themselves go in a caption
@@ -353,8 +377,7 @@ export function lineChart(host, { dates, series, colors, events = [], yFmt = fmt
       c.setAttribute("cx", sx(i)); c.setAttribute("cy", sy(series[si].values[i]));
       c.setAttribute("opacity", 1);
     });
-    tip.show(ttHtml(new Date(dates[i]).toLocaleDateString("en-US",
-      { month: "short", day: "numeric", year: "numeric" }),
+    tip.show(ttHtml(fmtDate(dates[i], { month: "short", day: "numeric", year: "numeric" }),
       series.map((s) => [s.label, yFmt(s.values[i])])),
       ev.clientX, ev.clientY);
   });
@@ -370,8 +393,7 @@ export function lineChart(host, { dates, series, colors, events = [], yFmt = fmt
   if (marked.length) {
     host.appendChild(h("div", { class: "card-note", style: "margin-top:6px" },
       marked.map((m, k) => h("span", {
-        text: `${k ? " · " : ""}${m.n} ${m.label} (${new Date(m.date)
-          .toLocaleDateString("en-US", { month: "short", day: "numeric" })})`,
+        text: `${k ? " · " : ""}${m.n} ${m.label} (${fmtDate(m.date, { month: "short", day: "numeric" })})`,
       }))));
   }
   return svg;
